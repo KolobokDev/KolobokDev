@@ -238,4 +238,3 @@ end
 				local signal
 				players:Seperator()
 			end)
-                        main:Toggle("Auto Cancel") 
