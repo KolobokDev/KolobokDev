@@ -50,5 +50,3 @@ game.Players.LocalPlayer.Character:PivotTo(CFrame.new(-20.366374969482422, 2.978
 wait(5)
 game.Players.LocalPlayer.Character:PivotTo(CFrame.new(377.3096008300781, 7.522085666656494, -399.2945861816406))
 wait(15)
- --- под вами свечка нажмите на н её
-game.Players.LocalPlayer.Character:PivotTo(CFrame.new(478.1269226074219, 2.978905200958252, -62.14019775390625)
