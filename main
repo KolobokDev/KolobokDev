@@ -1,240 +1,155 @@
-local LOAD_TIME = tick()
-local queueonteleport = queue_on_teleport or queueonteleport
-local setclipboard = toclipboard or setrbxclipboard or setclipboard
-local clonefunction = clonefunc or clonefunction
-local hookfunction =
-	hookfunc or replacecclosure or detourfunction or replacefunc or replacefunction or replaceclosure or detour_function or
-	hookfunction
-local setthreadidentity = set_thread_identity or setthreadcaps or setthreadidentity
-local firetouchinterests = fire_touch_interests or firetouchinterests
-local getnamecallmethod = get_namecall_method or getnamecallmethod
-local setnamecallmethod = set_namecall_method or setnamecallmethod
-local restorefunction = restorefunction or restoreclosure or restorefunc
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
--- // cloneref function for exploits that dont support it
-local a = Instance.new("Part")
-for b, c in pairs(getreg()) do
-	if type(c) == "table" and #c then
-		if rawget(c, "__mode") == "kvs" then
-			for d, e in pairs(c) do
-				if e == a then
-					getgenv().InstanceList = c;
-					break
-				end
+local Window = Rayfield:CreateWindow({
+   Name = "🔥 Example Script Hub | Game 🔫",
+   LoadingTitle = "🔫 Gun Simulator 💥",
+   LoadingSubtitle = "by 1_F0",
+   ConfigurationSaving = {
+      Enabled = false,
+      FolderName = nil, -- Create a custom folder for your hub/game
+      FileName = "Example Hub"
+   },
+   Discord = {
+      Enabled = false,
+      Invite = "noinvitelink", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ABCD would be ABCD
+      RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+   },
+   KeySystem = true, -- Set this to true to use our key system
+   KeySettings = {
+      Title = "Key | Youtube Hub",
+      Subtitle = "Key System",
+      Note = "Key In Discord Server",
+      FileName = "YoutubeHubKey1", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
+      SaveKey = false, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+      GrabKeyFromSite = true, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+      Key = {"https://pastebin.com/raw/AtgzSPWK"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+   }
+})
+
+local MainTab = Window:CreateTab("🏠 Home", nil) -- Title, Image
+local MainSection = MainTab:CreateSection("Main")
+
+Rayfield:Notify({
+   Title = "You executed the script",
+   Content = "Very cool gui",
+   Duration = 5,
+   Image = 13047715178,
+   Actions = { -- Notification Buttons
+      Ignore = {
+         Name = "Okay!",
+         Callback = function()
+         print("The user tapped Okay!")
+      end
+   },
+},
+})
+
+local Button = MainTab:CreateButton({
+   Name = "Infinite Jump Toggle",
+   Callback = function()
+       --Toggles the infinite jump between on or off on every script run
+_G.infinjump = not _G.infinjump
+
+if _G.infinJumpStarted == nil then
+	--Ensures this only runs once to save resources
+	_G.infinJumpStarted = true
+	
+	--Notifies readiness
+	game.StarterGui:SetCore("SendNotification", {Title="Youtube Hub"; Text="Infinite Jump Activated!"; Duration=5;})
+
+	--The actual infinite jump
+	local plr = game:GetService('Players').LocalPlayer
+	local m = plr:GetMouse()
+	m.KeyDown:connect(function(k)
+		if _G.infinjump then
+			if k:byte() == 32 then
+			humanoid = game:GetService'Players'.LocalPlayer.Character:FindFirstChildOfClass('Humanoid')
+			humanoid:ChangeState('Jumping')
+			wait()
+			humanoid:ChangeState('Seated')
 			end
 		end
-	end
-end
-local f = {}
-function f.invalidate(g)
-	if not InstanceList then
-		return
-	end
-	for b, c in pairs(InstanceList) do
-		if c == g then
-			InstanceList[b] = nil;
-			return g
-		end
-	end
-end
-if not cloneref then
-	getgenv().cloneref = f.invalidate
-end
-
-getrenv().Visit = cloneref(game:GetService("Visit"))
-getrenv().MarketplaceService = cloneref(game:GetService("MarketplaceService")) -- // theres a reason why thats referenced in the roblox environment
-getrenv().HttpRbxApiService = cloneref(game:GetService("HttpRbxApiService"))
-getrenv().HttpService = cloneref(game:GetService("HttpService"))
-local CoreGui = cloneref(game:GetService("CoreGui"))
-local ContentProvider = cloneref(game:GetService("ContentProvider"))
-local RunService = cloneref(game:GetService("RunService"))
-local Stats = cloneref(game:GetService("Stats"))
-local Players = cloneref(game:GetService("Players"))
-local NetworkClient = cloneref(game:GetService("NetworkClient"))
-local VirtualUser = cloneref(game:GetService("VirtualUser"))
-local ProximityPromptService = cloneref(game:GetService("ProximityPromptService"))
-local Lighting = cloneref(game:GetService("Lighting"))
-local AssetService = cloneref(game:GetService("AssetService"))
-local TeleportService = cloneref(game:GetService("TeleportService"))
-local NetworkSettings = settings().Network
-local UserGameSettings = UserSettings():GetService("UserGameSettings")
-getrenv().getgenv = clonefunction(getgenv)
-
-getgenv().stealth_call = function(script)
-	getrenv()._set = clonefunction(setthreadidentity)
-	local old
-	old = hookmetamethod(game, "__index", function(a, b)
-		task.spawn(function()
-			_set(7)
-			task.wait(0.1)
-			local went, error = pcall(function()
-				loadstring(script)()
-			end)
-			print(went, error)
-			if went then
-				local check = Instance.new("LocalScript")
-				check.Parent = Visit
-			end
-		end)
-		hookmetamethod(game, "__index", old)
-		return old(a, b)
 	end)
 end
+   end,
+})
 
-local function touch(x)
-	x = x:FindFirstAncestorWhichIsA("Part")
-	if x then
-		if firetouchinterest then
-			task.spawn(function()
-				firetouchinterest(x, Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart"), 1)
-				wait()
-				firetouchinterest(x, Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart"), 0)
-			end)
-		end
-		x.CFrame = Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame
-	end
-end
+local Slider = MainTab:CreateSlider({
+   Name = "WalkSpeed Slider",
+   Range = {1, 350},
+   Increment = 1,
+   Suffix = "Speed",
+   CurrentValue = 16,
+   Flag = "sliderws", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = (Value)
+   end,
+})
 
-for i, v in pairs(game.RobloxReplicatedStorage:GetDescendants()) do
-	pcall(function()
-		v:Destroy()
-	end)
-end
+local Slider = MainTab:CreateSlider({
+   Name = "JumpPower Slider",
+   Range = {1, 350},
+   Increment = 1,
+   Suffix = "Speed",
+   CurrentValue = 16,
+   Flag = "sliderjp", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+        game.Players.LocalPlayer.Character.Humanoid.JumpPower = (Value)
+   end,
+})
 
-			task.spawn(function()	
-                local discord = loadstring(game:HttpGet("https://raw.githubusercontent.com/diaslo/EgorchikHichimiroProject/main/discord.lua",true))()
-                local win = discord:Window("Created By Egor")
-                local serv = win:Server("Ugc-Sniper", "rbxassetid://0")
-                local main = serv:Channel("Main")
-				main:Toggle("Start Snipe", false, function(bool)
-					if bool then
-						getrenv()._set = clonefunction(setthreadidentity)
-						local old
-						old = hookmetamethod(game, "__index", function(a, b)
-							task.spawn(function()
-								_set(7)
-								task.wait()
-								getgenv().promptpurchaserequestedv2 = MarketplaceService.PromptPurchaseRequestedV2:Connect(
-								function(...)
-									local startTime = tick()
-									t = {...}
-									local assetId = t[2]
-									local idempotencyKey = t[5]
-									local purchaseAuthToken = t[6]
-									local info = MarketplaceService:GetProductInfo(assetId)
-									local productId = info.ProductId
-									local price = info.PriceInRobux
-									local collectibleItemId = info.CollectibleItemId
-									local collectibleProductId = info.CollectibleProductId
-									print("Double checking if we got the right info...")
-									print("PurchaseAuthToken: " .. purchaseAuthToken)
-									print("IdempotencyKey: " .. idempotencyKey)
-									print("CollectibleItemId: " .. collectibleItemId)
-									print("CollectibleProductId: " .. collectibleProductId)
-									print("ProductId (SHOULD BE 0): " .. productId)
-									print("Price: " .. price)
-									print("-------------------------------------------------------")
-									warn("FIRST PURCHASE ATTEMPT")
-									for i, v in pairs(MarketplaceService:PerformPurchase(Enum.InfoType.Asset, productId, price,
-										tostring(game:GetService("HttpService"):GenerateGUID(false)), true, collectibleItemId,
-										collectibleProductId, idempotencyKey, tostring(purchaseAuthToken))) do
-										print(i, v)
-									end
-									local endTime = tick()
-									local duration = 0
-									print("Bought Item! Took " .. tostring(duration) .. " seconds")
-									local input = loadstring(game:HttpGet('https://pastebin.com/raw/dYzQv3d8'))()
-									input.press(Enum.KeyCode.F9)
-								end)
-							end)
-							hookmetamethod(game, "__index", old)
-							return old(a, b)
-						end)
-					else
-						getgenv().promptpurchaserequestedv2:Disconnect()
-					end
-				end)
+local Dropdown = MainTab:CreateDropdown({
+   Name = "Select Area",
+   Options = {"Starter World","Pirate Island","Pineapple Paradise"},
+   CurrentOption = {"Starter World"},
+   MultipleOptions = false,
+   Flag = "dropdownarea", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Option)
+        print(Option)
+   end,
+})
 
-				local ClickingSpeed = 0
-				local loopActive = false
+local Input = MainTab:CreateInput({
+   Name = "Walkspeed",
+   PlaceholderText = "1-500",
+   RemoveTextAfterFocusLost = true,
+   Callback = function(Text)
+        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = (Text)
+   end,
+})
 
-				main:Toggle("Auto Cancel", false, function(bool)
+local OtherSection = MainTab:CreateSection("Other")
 
-					loopActive = bool
+local Toggle = MainTab:CreateToggle({
+   Name = "Auto Farm",
+   CurrentValue = false,
+   Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+        print("FARMING")
+   end,
+})
 
-					if loopActive then
-						while loopActive == true do
-							local purchasePrompt = game.CoreGui:FindFirstChild("PurchasePrompt")
-							if purchasePrompt then
-								local productPurchaseContainer = purchasePrompt:FindFirstChild("ProductPurchaseContainer")
-								if productPurchaseContainer then
-									local animator = productPurchaseContainer:FindFirstChild("Animator")
-									if animator then
-										local prompt = animator:FindFirstChild("Prompt")
-										if prompt and 
-											prompt:FindFirstChild("AlertContents") and
-											prompt.AlertContents:FindFirstChild("Footer") and
-											prompt.AlertContents.Footer:FindFirstChild("Buttons") then
+local TPTab = Window:CreateTab("🏝 Teleports", nil) -- Title, Image
 
-											for _, button in ipairs(prompt.AlertContents.Footer.Buttons:GetChildren()) do
-												if button:FindFirstChild("ButtonContent") and
-													button.ButtonContent:FindFirstChild("ButtonMiddleContent") and
-													button.ButtonContent.ButtonMiddleContent:FindFirstChildOfClass("TextLabel") and
-													button.ButtonContent.ButtonMiddleContent:FindFirstChildOfClass("TextLabel").Text == "Cancel" then
+local Button1 = TPTab:CreateButton({
+   Name = "Starter Island",
+   Callback = function()
+        --Teleport1
+   end,
+})
 
-													local pos = button.AbsolutePosition
-													print(pos)
+local Button2 = TPTab:CreateButton({
+   Name = "Pirate Island",
+   Callback = function()
+        --Teleport2
+   end,
+})
 
-													for _, v in ipairs(prompt.AlertContents.Footer.Buttons:GetChildren()) do
-														print(v.Name)
-													end
+local Button3 = TPTab:CreateButton({
+   Name = "Pineapple Paradise",
+   Callback = function()
+        --Teleport3
+   end,
+})
 
-													game:GetService("VirtualInputManager"):SendMouseButtonEvent(pos.X + button.AbsoluteSize.X / 2, pos.Y + button.AbsoluteSize.Y, 0, true, game, 1)
-													wait()
-													game:GetService("VirtualInputManager"):SendMouseButtonEvent(pos.X + button.AbsoluteSize.X / 2, pos.Y + button.AbsoluteSize.Y, 0, false, game, 1)
-												end
-											end
-										end
-									end
-								end
-							end
-							wait(0)
-							if loopActive == false then
-								break
-							end
-						end
-					end
-				end)
-
-
-
-
-
-				main:Toggle("Auto Close Error", false, function(bool)
-					loopActive = bool
-					spawn(function()
-						while bool == true do
-							local pp = game.CoreGui.PurchasePrompt.ProductPurchaseContainer.Animator:FindFirstChild("Prompt")
-							if pp and pp.AlertContents and pp.AlertContents.Footer and pp.AlertContents.Footer.Buttons and not pp.AlertContents.Footer.Buttons:FindFirstChild("1") then
-								if pp.AlertContents.Footer.Buttons:FindFirstChild("1") then
-									local b1 = pp.AlertContents.Footer.Buttons[1].AbsolutePosition
-									game:GetService("VirtualInputManager"):SendMouseButtonEvent(b1.X + 55, b1.Y + 65.5, 0, true, game, 1)
-									wait()
-									game:GetService("VirtualInputManager"):SendMouseButtonEvent(b1.X + 55, b1.Y + 65.5, 0, false, game, 1)
-								end
-							end
-							wait()
-						end
-					end)
-				end)
-				main:Toggle("Anti Afk", false, function(bool)
-					if bool == true then
-						Players.LocalPlayer.Idled:connect(function()
-							VirtualUser:CaptureController()
-							VirtualUser:ClickButton2(Vector2.new())
-						end)
-					end
-				end)
-				local signal
-				players:Seperator()
-			end)
+local TPTab = Window:CreateTab("🎲 Misc", nil) -- Title, Image
